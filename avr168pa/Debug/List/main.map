@@ -1,0 +1,41 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+rx_buffer0                                                                        0x0300      43
+rcon                                                                              0x032B      10
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+rx_wr_index0                                                                      R4           1
+rx_rd_index0                                                                      R3           1
+rx_counter0                                                                       R6           1
+rx_buffer_overflow0                                                               GPIOR0.0  1bit
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+usart_rx_isr                                                                      0x001C2     36
+getchar                                                                           0x001E6     19
+main                                                                              0x001F9    348
+gmul                                                                              0x00355     34
+Expankey                                                                          0x00377    121
+AddRoundKey                                                                       0x003F0     29
+Encrypt                                                                           0x0040D     88
+SubBytes                                                                          0x00465     26
+MixColumns                                                                        0x0047F    261
+ShiftRows                                                                         0x00584     39
+Decrypt                                                                           0x005AB     75
+InvShiftRows                                                                      0x005F6     39
+InvSubBytes                                                                       0x0061D     25
+InvMixColumns                                                                     0x00636    414
+putchar                                                                           0x007D4     10
+put_usart_G100                                                                    0x007DE     13
+_print_G100                                                                       0x007EB    308
+printf                                                                            0x0091F     37
+strlen                                                                            0x00944     12
+strlenf                                                                           0x00950     13
