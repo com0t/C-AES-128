@@ -20,7 +20,7 @@ flash unsigned char sbox[256] =
     0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16
  };
  
- flash unsigned char inv_sbox[256] = 
+flash unsigned char inv_sbox[256] = 
  {
     0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB,
     0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB,
@@ -39,10 +39,10 @@ flash unsigned char sbox[256] =
     0xA0, 0xE0, 0x3B, 0x4D, 0xAE, 0x2A, 0xF5, 0xB0, 0xC8, 0xEB, 0xBB, 0x3C, 0x83, 0x53, 0x99, 0x61,
     0x17, 0x2B, 0x04, 0x7E, 0xBA, 0x77, 0xD6, 0x26, 0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D
  };
- unsigned char rcon[10] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36};
+unsigned char rcon[10] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36};
  
 void Encrypt(unsigned char *in,unsigned char *key,unsigned char *out);
-void Decrypt(unsigned char *in,unsigned char *key,unsigned char *out);
+//void Decrypt(unsigned char *in,unsigned char *key,unsigned char *out);
 
 // OverView Function Encrypt
 void Expankey(unsigned char *key,unsigned char *expkey);
@@ -53,12 +53,11 @@ void ShiftRows(unsigned char *state);
 
 
 //    OverView Function Decrypt
-void InvShiftRows(unsigned char *state);
-void InvSubBytes(unsigned char *state);
-void InvMixColumns(unsigned char *state);
+//void InvShiftRows(unsigned char *state);
+//void InvSubBytes(unsigned char *state);
+//void InvMixColumns(unsigned char *state);
 
 // function for all
-
 // function multilply 2 number
 unsigned char gmul(unsigned char a, unsigned char b) {
     unsigned char p = 0; /* the product of the multiplication */
@@ -210,90 +209,93 @@ void ShiftRows(unsigned char *state)
     state[14]=tmp[6];
     state[15]=tmp[11];
 }
-
-
 // End function Encrypt
 
 //Begin function Decrypt
-void Decrypt(unsigned char *in,unsigned char *key,unsigned char *out)
-{
-    unsigned char expkey[176],i,j;
-    
-    Expankey(key,expkey);
-    AddRoundKey(in,expkey,176);
-    InvShiftRows(in);
-    InvSubBytes(in);
-    for (i=10;i>1;i--)
-    {
-        AddRoundKey(in,expkey,i*16);
-        InvMixColumns(in);
-        InvShiftRows(in);
-        InvSubBytes(in);
-    }
-    AddRoundKey(in,key,16);
-    for (i=0;i<16;i++)
-        out[i] = in[i];
-        
-}
-
-void InvShiftRows(unsigned char *state)
-{
-    unsigned char tmp[16],i;
-    for (i=0;i<16;i++)
-        tmp[i] = state[i];
-    state[0] = tmp[0];
-    state[1] = tmp[13];
-    state[2] = tmp[10];
-    state[3] = tmp[7];
-    
-    state[4] = tmp[4];
-    state[5] = tmp[1];
-    state[6] = tmp[14];
-    state[7] = tmp[11];
-    
-    state[8] = tmp[8];
-    state[9] = tmp[5];
-    state[10] = tmp[2];
-    state[11] = tmp[15];
-    
-    state[12] = tmp[12];
-    state[13] = tmp[9];
-    state[14] = tmp[6];
-    state[15] = tmp[3];
-}
-
-void InvSubBytes(unsigned char *state)
-{
-    unsigned char i;
-    for (i=0;i<16;i++)
-        state[i] = inv_sbox[state[i]];
-}
-
-
-void InvMixColumns(unsigned char *state)
-{
-    unsigned char tmp[16],i;
-    for (i=0;i<16;i++)
-        tmp[i] = state[i];
-    state[0] = gmul(0x09,tmp[3]) ^ gmul(0x0b,tmp[1]) ^ gmul(0x0d,tmp[2]) ^ gmul(0x0e,tmp[0]);
-    state[1] = gmul(0x09,tmp[0]) ^ gmul(0x0b,tmp[2]) ^ gmul(0x0d,tmp[3]) ^ gmul(0x0e,tmp[1]);
-    state[2] = gmul(0x09,tmp[1]) ^ gmul(0x0b,tmp[3]) ^ gmul(0x0d,tmp[0]) ^ gmul(0x0e,tmp[2]);
-    state[3] = gmul(0x09,tmp[2]) ^ gmul(0x0b,tmp[0]) ^ gmul(0x0d,tmp[1]) ^ gmul(0x0e,tmp[3]);
-    
-    state[4] = gmul(0x09,tmp[7]) ^ gmul(0x0b,tmp[5]) ^ gmul(0x0d,tmp[6]) ^ gmul(0x0e,tmp[4]);
-    state[5] = gmul(0x09,tmp[4]) ^ gmul(0x0b,tmp[6]) ^ gmul(0x0d,tmp[7]) ^ gmul(0x0e,tmp[5]);
-    state[6] = gmul(0x09,tmp[5]) ^ gmul(0x0b,tmp[7]) ^ gmul(0x0d,tmp[4]) ^ gmul(0x0e,tmp[6]);
-    state[7] = gmul(0x09,tmp[6]) ^ gmul(0x0b,tmp[4]) ^ gmul(0x0d,tmp[5]) ^ gmul(0x0e,tmp[7]);
-    
-    state[8] = gmul(0x09,tmp[11]) ^ gmul(0x0b,tmp[9]) ^ gmul(0x0d,tmp[10]) ^ gmul(0x0e,tmp[8]);
-    state[9] = gmul(0x09,tmp[8]) ^ gmul(0x0b,tmp[10]) ^ gmul(0x0d,tmp[11]) ^ gmul(0x0e,tmp[9]);
-    state[10] = gmul(0x09,tmp[9]) ^ gmul(0x0b,tmp[11]) ^ gmul(0x0d,tmp[8]) ^ gmul(0x0e,tmp[10]);
-    state[11] = gmul(0x09,tmp[10]) ^ gmul(0x0b,tmp[8]) ^ gmul(0x0d,tmp[9]) ^ gmul(0x0e,tmp[11]);
-    
-    state[12] = gmul(0x09,tmp[15]) ^ gmul(0x0b,tmp[13]) ^ gmul(0x0d,tmp[14]) ^ gmul(0x0e,tmp[12]);
-    state[13] = gmul(0x09,tmp[12]) ^ gmul(0x0b,tmp[14]) ^ gmul(0x0d,tmp[15]) ^ gmul(0x0e,tmp[13]);
-    state[14] = gmul(0x09,tmp[13]) ^ gmul(0x0b,tmp[15]) ^ gmul(0x0d,tmp[12]) ^ gmul(0x0e,tmp[14]);
-    state[15] = gmul(0x09,tmp[14]) ^ gmul(0x0b,tmp[12]) ^ gmul(0x0d,tmp[13]) ^ gmul(0x0e,tmp[15]);
-    
-}
+//void Decrypt(unsigned char *in,unsigned char *key,unsigned char *out)
+//{
+//    unsigned char expkey[176],i,state[16];
+//    
+//    for(i=0;i<16;i++)
+//        state[i]=in[i];
+//    
+//    Expankey(key,expkey);
+//    AddRoundKey(state,expkey,176);
+//    InvShiftRows(state);
+//    InvSubBytes(state);
+//    for (i=10;i>1;i--)
+//    {
+//        AddRoundKey(state,expkey,i*16);
+//        InvMixColumns(state);
+//        InvShiftRows(state);
+//        InvSubBytes(state);
+//    }
+//    AddRoundKey(state,key,16);
+//    for (i=0;i<16;i++)
+//        out[i] = state[i];
+//        
+//}
+//
+//void InvShiftRows(unsigned char *state)
+//{
+//    unsigned char tmp[16],i;
+//    for (i=0;i<16;i++)
+//        tmp[i] = state[i];
+//        
+//    state[0] = tmp[0];
+//    state[1] = tmp[13];
+//    state[2] = tmp[10];
+//    state[3] = tmp[7];
+//    
+//    state[4] = tmp[4];
+//    state[5] = tmp[1];
+//    state[6] = tmp[14];
+//    state[7] = tmp[11];
+//    
+//    state[8] = tmp[8];
+//    state[9] = tmp[5];
+//    state[10] = tmp[2];
+//    state[11] = tmp[15];
+//    
+//    state[12] = tmp[12];
+//    state[13] = tmp[9];
+//    state[14] = tmp[6];
+//    state[15] = tmp[3];
+//}
+//
+//void InvSubBytes(unsigned char *state)
+//{
+//    unsigned char i;
+//    for (i=0;i<16;i++)
+//        state[i] = inv_sbox[state[i]];
+//}
+//
+//
+//void InvMixColumns(unsigned char *state)
+//{
+//    unsigned char tmp[16],i;
+//    for (i=0;i<16;i++)
+//        tmp[i] = state[i];
+//        
+//    state[0] = gmul(0x09,tmp[3]) ^ gmul(0x0b,tmp[1]) ^ gmul(0x0d,tmp[2]) ^ gmul(0x0e,tmp[0]);
+//    state[1] = gmul(0x09,tmp[0]) ^ gmul(0x0b,tmp[2]) ^ gmul(0x0d,tmp[3]) ^ gmul(0x0e,tmp[1]);
+//    state[2] = gmul(0x09,tmp[1]) ^ gmul(0x0b,tmp[3]) ^ gmul(0x0d,tmp[0]) ^ gmul(0x0e,tmp[2]);
+//    state[3] = gmul(0x09,tmp[2]) ^ gmul(0x0b,tmp[0]) ^ gmul(0x0d,tmp[1]) ^ gmul(0x0e,tmp[3]);
+//    
+//    state[4] = gmul(0x09,tmp[7]) ^ gmul(0x0b,tmp[5]) ^ gmul(0x0d,tmp[6]) ^ gmul(0x0e,tmp[4]);
+//    state[5] = gmul(0x09,tmp[4]) ^ gmul(0x0b,tmp[6]) ^ gmul(0x0d,tmp[7]) ^ gmul(0x0e,tmp[5]);
+//    state[6] = gmul(0x09,tmp[5]) ^ gmul(0x0b,tmp[7]) ^ gmul(0x0d,tmp[4]) ^ gmul(0x0e,tmp[6]);
+//    state[7] = gmul(0x09,tmp[6]) ^ gmul(0x0b,tmp[4]) ^ gmul(0x0d,tmp[5]) ^ gmul(0x0e,tmp[7]);
+//    
+//    state[8] = gmul(0x09,tmp[11]) ^ gmul(0x0b,tmp[9]) ^ gmul(0x0d,tmp[10]) ^ gmul(0x0e,tmp[8]);
+//    state[9] = gmul(0x09,tmp[8]) ^ gmul(0x0b,tmp[10]) ^ gmul(0x0d,tmp[11]) ^ gmul(0x0e,tmp[9]);
+//    state[10] = gmul(0x09,tmp[9]) ^ gmul(0x0b,tmp[11]) ^ gmul(0x0d,tmp[8]) ^ gmul(0x0e,tmp[10]);
+//    state[11] = gmul(0x09,tmp[10]) ^ gmul(0x0b,tmp[8]) ^ gmul(0x0d,tmp[9]) ^ gmul(0x0e,tmp[11]);
+//    
+//    state[12] = gmul(0x09,tmp[15]) ^ gmul(0x0b,tmp[13]) ^ gmul(0x0d,tmp[14]) ^ gmul(0x0e,tmp[12]);
+//    state[13] = gmul(0x09,tmp[12]) ^ gmul(0x0b,tmp[14]) ^ gmul(0x0d,tmp[15]) ^ gmul(0x0e,tmp[13]);
+//    state[14] = gmul(0x09,tmp[13]) ^ gmul(0x0b,tmp[15]) ^ gmul(0x0d,tmp[12]) ^ gmul(0x0e,tmp[14]);
+//    state[15] = gmul(0x09,tmp[14]) ^ gmul(0x0b,tmp[12]) ^ gmul(0x0d,tmp[13]) ^ gmul(0x0e,tmp[15]);
+//    
+//}
 // End function Decrypt
